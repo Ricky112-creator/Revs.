@@ -1,0 +1,69 @@
+* { box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 16px;
+  background: #f4f4f5;
+  color: #1a1a1a;
+}
+header { padding: 12px 0; }
+h1 { font-size: 22px; }
+.home-link { text-decoration: none; color: #555; font-size: 14px; }
+.muted { color: #888; text-align: center; }
+
+.post-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.post-card h2 { margin: 0 0 8px; font-size: 18px; }
+.post-card p { margin: 0 0 12px; line-height: 1.5; white-space: pre-wrap; }
+.post-image { width: 100%; border-radius: 8px; margin-bottom: 12px; }
+
+.reactions { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.reaction-btn {
+  border: 1px solid #ddd;
+  background: #f9f9f9;
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.reaction-btn.reacted { background: #dbeafe; border-color: #93c5fd; }
+
+.actions { display: flex; gap: 8px; border-top: 1px solid #eee; padding-top: 10px; }
+.actions button {
+  flex: 1;
+  border: none;
+  background: none;
+  padding: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+.actions button:hover { background: #f2f2f2; }
+
+.comments-section { margin-top: 12px; border-top: 1px solid #eee; padding-top: 12px; }
+.comment { margin-bottom: 10px; font-size: 14px; }
+.comment .time { color: #999; font-size: 12px; margin-left: 6px; }
+.comment p { margin: 2px 0 0; }
+
+.comment-form input, .comment-form textarea {
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-family: inherit;
+}
+.comment-form button {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}

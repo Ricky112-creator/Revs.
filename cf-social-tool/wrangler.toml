@@ -1,0 +1,8 @@
+name = "social-post-tool"
+compatibility_date = "2024-09-23"
+pages_build_output_dir = "public"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "social_posts_db"
+database_id = "67ea4e12-2e42-4a47-9cab-15bb116368ae"

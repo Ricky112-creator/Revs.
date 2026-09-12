@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — create post</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+  body { max-width: 640px; }
+  input, textarea {
+    width: 100%; margin-bottom: 12px; padding: 8px;
+    border: 1px solid #ddd; border-radius: 8px; font-family: inherit;
+  }
+  button.primary {
+    background: #2563eb; color: #fff; border: none;
+    padding: 10px 16px; border-radius: 8px; cursor: pointer;
+  }
+  .post-row {
+    display: flex; justify-content: space-between; align-items: center;
+    background: #fff; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px;
+  }
+  .post-row a { font-size: 13px; color: #555; }
+  .delete-btn {
+    background: #fee2e2; color: #b91c1c; border: none;
+    padding: 6px 10px; border-radius: 6px; cursor: pointer;
+  }
+  #token-setup { background: #fff; padding: 12px; border-radius: 8px; margin-bottom: 20px; }
+</style>
+</head>
+<body>
+<header><h1>Admin dashboard</h1></header>
+
+<div id="token-setup">
+  <label>Admin token (from Cloudflare Pages env vars)</label>
+  <input type="password" id="admin-token" placeholder="Paste your ADMIN_TOKEN">
+  <button class="primary" id="save-token">Save token</button>
+</div>
+
+<form id="post-form">
+  <label>Title</label>
+  <input type="text" name="title" required>
+  <label>Body</label>
+  <textarea name="body" rows="5" required></textarea>
+  <label>Image URL (optional)</label>
+  <input type="text" name="image_url" placeholder="https://...">
+  <button class="primary" type="submit">Publish now</button>
+</form>
+
+<h2>Existing posts</h2>
+<div id="post-list"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
