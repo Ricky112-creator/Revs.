@@ -25,27 +25,50 @@ const REACTIONS = [
   { type: 'wow', emoji: '😮' },
 ];
 
-function reactedKey(postId, type) {
-  return `reacted:${postId}:${type}`;
+function myReactionKey(postId) {
+  return `myreaction:${postId}`;
 }
 
 async function react(postId, type, container) {
-  if (localStorage.getItem(reactedKey(postId, type))) return;
+  const current = localStorage.getItem(myReactionKey(postId));
+
+  if (current === type) {
+    // Clicking the same reaction again removes it
+    const counts = await fetchJSON('/api/react', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ postId, type, action: 'remove' }),
+    });
+    localStorage.removeItem(myReactionKey(postId));
+    renderReactionCounts(container, postId, counts);
+    return;
+  }
+
+  if (current) {
+    // Remove old reaction first
+    await fetchJSON('/api/react', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ postId, type: current, action: 'remove' }),
+    });
+  }
+
   const counts = await fetchJSON('/api/react', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ postId, type }),
+    body: JSON.stringify({ postId, type, action: 'add' }),
   });
-  localStorage.setItem(reactedKey(postId, type), '1');
+  localStorage.setItem(myReactionKey(postId), type);
   renderReactionCounts(container, postId, counts);
 }
 
 function renderReactionCounts(container, postId, counts) {
   const map = {};
   (counts || []).forEach((c) => (map[c.type] = c.count));
+  const mine = localStorage.getItem(myReactionKey(postId));
   container.innerHTML = REACTIONS.map(
     (r) => `
-    <button class="reaction-btn ${localStorage.getItem(reactedKey(postId, r.type)) ? 'reacted' : ''}" data-type="${r.type}">
+    <button class="reaction-btn ${mine === r.type ? 'reacted' : ''}" data-type="${r.type}">
       ${r.emoji} <span>${map[r.type] || 0}</span>
     </button>
   `
@@ -55,20 +78,31 @@ function renderReactionCounts(container, postId, counts) {
   });
 }
 
-async function loadComments(postId, container) {
-  const comments = await fetchJSON(`/api/comments?postId=${postId}`);
-  container.innerHTML =
-    comments
-      .map(
-        (c) => `
+function commentHtml(c) {
+  return `
     <div class="comment">
       <strong>${escapeHtml(c.author)}</strong>
       <span class="time">${timeAgo(c.created_at)}</span>
       <p>${escapeHtml(c.body)}</p>
     </div>
-  `
-      )
-      .join('') || '<p class="muted">No comments yet. Be the first.</p>';
+  `;
+}
+
+async function loadCommentsPreview(postId, listEl, viewAllEl) {
+  const comments = await fetchJSON(`/api/comments?postId=${postId}`);
+  const preview = comments.slice(-2);
+  listEl.innerHTML = preview.map(commentHtml).join('') || '<p class="muted">No comments yet. Be the first.</p>';
+
+  if (comments.length > preview.length) {
+    viewAllEl.style.display = 'block';
+    viewAllEl.textContent = `View all ${comments.length} comments`;
+    viewAllEl.onclick = () => {
+      listEl.innerHTML = comments.map(commentHtml).join('');
+      viewAllEl.style.display = 'none';
+    };
+  } else {
+    viewAllEl.style.display = 'none';
+  }
 }
 
 function shareLink(postId) {
@@ -81,19 +115,29 @@ function shareLink(postId) {
   }
 }
 
+function mediaHtml(post) {
+  if (post.media_type === 'video' && post.image_url) {
+    return `<video src="${post.image_url}" class="post-media" controls playsinline></video>`;
+  }
+  if (post.image_url) {
+    return `<img src="${post.image_url}" class="post-media" alt="">`;
+  }
+  return '';
+}
+
 function postCardHtml(post) {
   return `
     <article class="post-card" data-id="${post.id}">
-      ${post.image_url ? `<img src="${post.image_url}" class="post-image" alt="">` : ''}
+      ${mediaHtml(post)}
       <h2>${escapeHtml(post.title)}</h2>
       <p>${escapeHtml(post.body)}</p>
       <div class="reactions" id="reactions-${post.id}"></div>
       <div class="actions">
-        <button class="comment-toggle">💬 Comment</button>
         <button class="share-btn">🔗 Share</button>
       </div>
-      <div class="comments-section" style="display:none">
+      <div class="comments-section">
         <div class="comments-list"></div>
+        <a class="view-all-comments" style="display:none"></a>
         <form class="comment-form">
           <input type="text" name="author" placeholder="Your name (optional)" maxlength="60">
           <textarea name="body" placeholder="Write a comment..." required maxlength="1000"></textarea>
@@ -108,18 +152,9 @@ function wireCard(el, post) {
   renderReactionCounts(el.querySelector(`#reactions-${post.id}`), post.id, post.reactions || []);
   el.querySelector('.share-btn').addEventListener('click', () => shareLink(post.id));
 
-  const toggle = el.querySelector('.comment-toggle');
-  const section = el.querySelector('.comments-section');
   const list = el.querySelector('.comments-list');
-  let loaded = false;
-
-  toggle.addEventListener('click', async () => {
-    section.style.display = section.style.display === 'none' ? 'block' : 'none';
-    if (!loaded && section.style.display === 'block') {
-      await loadComments(post.id, list);
-      loaded = true;
-    }
-  });
+  const viewAll = el.querySelector('.view-all-comments');
+  loadCommentsPreview(post.id, list, viewAll);
 
   el.querySelector('.comment-form').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -133,7 +168,7 @@ function wireCard(el, post) {
       body: JSON.stringify({ postId: post.id, author, body }),
     });
     form.body.value = '';
-    await loadComments(post.id, list);
+    await loadCommentsPreview(post.id, list, viewAll);
   });
 }
 

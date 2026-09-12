@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS posts (
   title TEXT NOT NULL,
   body TEXT NOT NULL,
   image_url TEXT,
+  media_type TEXT DEFAULT 'none',
   created_at TEXT NOT NULL
 );
 

@@ -21,7 +21,8 @@ h1 { font-size: 22px; }
 }
 .post-card h2 { margin: 0 0 8px; font-size: 18px; }
 .post-card p { margin: 0 0 12px; line-height: 1.5; white-space: pre-wrap; }
-.post-image { width: 100%; border-radius: 8px; margin-bottom: 12px; }
+.post-media { width: 100%; border-radius: 8px; margin-bottom: 12px; display: block; }
+.view-all-comments { display: block; font-size: 13px; color: #2563eb; cursor: pointer; margin-bottom: 8px; }
 
 .reactions { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
 .reaction-btn {

@@ -5,7 +5,11 @@ export async function onRequestGet({ env, params, request }) {
   const url = new URL(request.url);
   const siteOrigin = `${url.protocol}//${url.host}`;
   const description = post.body.length > 160 ? post.body.slice(0, 157) + '...' : post.body;
-  const image = post.image_url || `${siteOrigin}/default-share-image.png`;
+  const isVideo = post.media_type === 'video' && post.image_url;
+  const image = (!isVideo && post.image_url) || `${siteOrigin}/default-share-image.png`;
+  const videoTags = isVideo
+    ? `<meta property="og:video" content="${post.image_url}"><meta property="og:type" content="video.other">`
+    : '';
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -18,7 +22,7 @@ export async function onRequestGet({ env, params, request }) {
 <meta property="og:description" content="${escapeHtml(description)}">
 <meta property="og:image" content="${image}">
 <meta property="og:url" content="${siteOrigin}/post/${post.id}">
-<meta property="og:type" content="article">
+${videoTags || '<meta property="og:type" content="article">'}
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${escapeHtml(post.title)}">
 <meta name="twitter:description" content="${escapeHtml(description)}">
