@@ -28,13 +28,17 @@
 </style>
 </head>
 <body>
-<header><h1>Admin dashboard</h1></header>
 
-<div id="token-setup">
-  <label>Admin token (from Cloudflare Pages env vars)</label>
+<div id="login-screen">
+  <h1>Admin login</h1>
+  <label>Admin token</label>
   <input type="password" id="admin-token" placeholder="Paste your ADMIN_TOKEN">
-  <button class="primary" id="save-token">Save token</button>
+  <button class="primary" id="login-btn">Unlock dashboard</button>
+  <p id="login-error" style="color:#b91c1c; display:none;">Wrong token. Try again.</p>
 </div>
+
+<div id="dashboard" style="display:none;">
+<header><h1>Admin dashboard</h1></header>
 
 <form id="post-form">
   <label>Title</label>
@@ -48,6 +52,7 @@
 
 <h2>Existing posts</h2>
 <div id="post-list"></div>
+</div>
 
 <script src="app.js"></script>
 </body>

@@ -2,15 +2,47 @@ function getToken() {
   return localStorage.getItem('admin_token') || '';
 }
 
-document.getElementById('admin-token').value = getToken();
+async function checkToken(token) {
+  const res = await fetch('/api/admin/verify', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.ok;
+}
 
-document.getElementById('save-token').addEventListener('click', () => {
-  const val = document.getElementById('admin-token').value.trim();
-  if (val) {
-    localStorage.setItem('admin_token', val);
-    alert('Token saved in this browser.');
+async function tryUnlock(token) {
+  const ok = await checkToken(token);
+  if (ok) {
+    localStorage.setItem('admin_token', token);
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    loadPosts();
+  } else {
+    localStorage.removeItem('admin_token');
+    document.getElementById('login-error').style.display = 'block';
   }
+}
+
+document.getElementById('login-btn').addEventListener('click', () => {
+  const val = document.getElementById('admin-token').value.trim();
+  if (val) tryUnlock(val);
 });
+
+document.getElementById('admin-token').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') document.getElementById('login-btn').click();
+});
+
+// Auto-unlock if a valid token is already saved in this browser
+const savedToken = getToken();
+if (savedToken) {
+  checkToken(savedToken).then((ok) => {
+    if (ok) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      loadPosts();
+    }
+  });
+}
 
 async function loadPosts() {
   const res = await fetch('/api/posts');
@@ -70,5 +102,3 @@ document.getElementById('post-form').addEventListener('submit', async (e) => {
   form.reset();
   loadPosts();
 });
-
-loadPosts();
