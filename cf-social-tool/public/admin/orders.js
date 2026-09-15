@@ -33,7 +33,7 @@ function orderRowHtml(o) {
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
           <select class="order-status status-${o.status}" data-id="${o.id}">${statusOptionsHtml(o.status)}</select>
-          <a class="secondary whatsapp-link" href="${waLink}" target="_blank" rel="noopener">WhatsApp</a>
+          <a class="secondary whatsapp-link" href="${waLink}" target="_blank" rel="noopener"><i class="ti ti-brand-whatsapp"></i>WhatsApp</a>
         </div>
       </div>
     </div>
@@ -53,7 +53,9 @@ async function loadOrders() {
     return;
   }
   const orders = await res.json();
-  list.innerHTML = orders.map(orderRowHtml).join('') || '<p class="muted">No orders yet.</p>';
+  list.innerHTML =
+    orders.map(orderRowHtml).join('') ||
+    '<div class="empty-state"><i class="ti ti-package"></i>No orders yet. They\'ll show up here as customers check out on your site.</div>';
 
   list.querySelectorAll('.order-status').forEach((select) => {
     select.addEventListener('change', async () => {

@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="../style.css">
 <style>
   body { max-width: 720px; }
@@ -14,15 +18,16 @@
 <body>
 
 <div id="login-screen">
+  <div class="brand-mark" style="margin: 0 auto 16px;"><i class="ti ti-lock"></i></div>
   <h1>Admin login</h1>
   <label>Admin token</label>
   <input type="password" id="admin-token" placeholder="Paste your ADMIN_TOKEN">
-  <button class="primary" id="login-btn">Unlock dashboard</button>
+  <button class="primary" id="login-btn" style="width:100%; justify-content:center; margin-top:10px;"><i class="ti ti-key"></i>Unlock dashboard</button>
   <p id="login-error" style="color:#b91c1c; display:none;">Wrong token. Try again.</p>
 </div>
 
 <div id="dashboard" style="display:none;">
-<header><h1>Admin dashboard</h1></header>
+<header><div class="brand-mark"><i class="ti ti-layout-dashboard"></i></div><h1>Admin dashboard</h1></header>
 
 <nav class="admin-tabs">
   <button class="admin-tab active" data-tab="posts">Posts</button>
@@ -36,7 +41,7 @@
   <input type="text" id="cloud-name" placeholder="e.g. dxyz1234">
   <label>Cloudinary unsigned upload preset</label>
   <input type="text" id="upload-preset" placeholder="e.g. social_posts_unsigned">
-  <button class="secondary" id="save-cloudinary">Save</button>
+  <button class="secondary" id="save-cloudinary"><i class="ti ti-device-floppy"></i>Save</button>
 </div>
 
 <form id="post-form">
@@ -49,15 +54,15 @@
   <div id="upload-status"></div>
   <input type="hidden" id="media-url">
   <input type="hidden" id="media-type" value="none">
-  <button class="primary" type="submit">Preview post</button>
+  <button class="primary" type="submit"><i class="ti ti-eye"></i>Preview post</button>
 </form>
 
 <div id="preview-wrap">
   <h2>Preview — this is exactly what will go live</h2>
   <div id="preview-card"></div>
   <div style="margin-top:12px;">
-    <button class="secondary" id="edit-btn">Edit</button>
-    <button class="primary" id="confirm-publish-btn">Confirm &amp; publish</button>
+    <button class="secondary" id="edit-btn"><i class="ti ti-pencil"></i>Edit</button>
+    <button class="primary" id="confirm-publish-btn"><i class="ti ti-send"></i>Confirm &amp; publish</button>
   </div>
 </div>
 

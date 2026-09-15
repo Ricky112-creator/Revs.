@@ -141,7 +141,7 @@ function postCardHtml(post) {
       <p>${escapeHtml(post.body)}</p>
       <div class="reactions" id="reactions-${post.id}"></div>
       <div class="actions">
-        <button class="share-btn">🔗 Share</button>
+        <button class="share-btn"><i class="ti ti-share-3"></i>Share</button>
       </div>
       <div class="comments-section">
         <div class="comments-list"></div>
@@ -184,7 +184,7 @@ async function initHome() {
   const app = document.getElementById('app');
   app.innerHTML = '<p class="muted">Loading posts...</p>';
   const posts = await fetchJSON('/api/posts');
-  app.innerHTML = posts.map(postCardHtml).join('') || '<p class="muted">No posts yet.</p>';
+  app.innerHTML = posts.map(postCardHtml).join('') || '<div class="empty-state"><i class="ti ti-message-2"></i>No posts yet. Check back soon.</div>';
   posts.forEach((post) => wireCard(app.querySelector(`[data-id="${post.id}"]`), post));
 }
 

@@ -184,15 +184,15 @@ async function loadPosts() {
           <a href="/post/${p.id}" target="_blank">/post/${p.id}</a>
         </div>
         <div>
-          <button class="secondary comments-toggle" data-id="${p.id}">Comments (${p.comment_count ?? 0})</button>
-          <button data-id="${p.id}" class="delete-btn">Delete</button>
+          <button class="secondary comments-toggle" data-id="${p.id}"><i class="ti ti-message-circle"></i>Comments (${p.comment_count ?? 0})</button>
+          <button data-id="${p.id}" class="delete-btn"><i class="ti ti-trash"></i>Delete</button>
         </div>
       </div>
       <div class="comments-panel" id="comments-panel-${p.id}" style="display:none;"></div>
     </div>
   `
       )
-      .join('') || '<p>No posts yet.</p>';
+      .join('') || '<div class="empty-state"><i class="ti ti-notes"></i>No posts yet. Publish your first one above.</div>';
 
   list.querySelectorAll('.delete-btn').forEach((btn) => {
     btn.addEventListener('click', async () => {
@@ -231,7 +231,7 @@ async function refreshComments(postId) {
   const res = await fetch(`/api/comments?postId=${postId}`);
   const comments = await res.json();
   panel.innerHTML =
-    comments.map(commentModHtml).join('') || '<p class="muted">No comments yet.</p>';
+    comments.map(commentModHtml).join('') || '<p class="muted" style="padding: 16px 0;">No comments yet on this post.</p>';
   wireCommentControls(panel, postId);
 }
 
@@ -248,13 +248,13 @@ function commentModHtml(c) {
           ${reply}
         </div>
         <div>
-          <button class="secondary reply-toggle" data-id="${c.id}">${c.admin_reply ? 'Edit reply' : 'Reply'}</button>
-          <button class="delete-btn comment-delete" data-id="${c.id}">Delete</button>
+          <button class="secondary reply-toggle" data-id="${c.id}"><i class="ti ti-message-reply"></i>${c.admin_reply ? 'Edit reply' : 'Reply'}</button>
+          <button class="delete-btn comment-delete" data-id="${c.id}"><i class="ti ti-trash"></i>Delete</button>
         </div>
       </div>
       <div class="reply-form" id="reply-form-${c.id}" style="display:none;">
         <textarea placeholder="Write a reply..." maxlength="1000">${c.admin_reply ? escapeHtml(c.admin_reply) : ''}</textarea>
-        <button class="primary save-reply" data-id="${c.id}">Save reply</button>
+        <button class="primary save-reply" data-id="${c.id}"><i class="ti ti-check"></i>Save reply</button>
       </div>
     </div>
   `;

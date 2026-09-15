@@ -25,14 +25,15 @@ const STATUS_LABELS = {
 function formHtml() {
   return `
     <div class="track-card">
+      <div class="brand-mark" style="margin-bottom: 14px;"><i class="ti ti-package"></i></div>
       <h1>Track your order</h1>
-      <p class="muted">Enter your order ID and the email you used at checkout.</p>
+      <p class="muted" style="text-align:left; margin: 6px 0 16px;">Enter your order ID and the email you used at checkout.</p>
       <label>Order ID</label>
       <input type="text" id="order-id" placeholder="e.g. f03e">
       <label>Email</label>
       <input type="email" id="order-email" placeholder="name@example.com">
       <p id="lookup-error" class="error" style="display:none;"></p>
-      <button class="primary" id="lookup-btn">Find my order</button>
+      <button class="primary" id="lookup-btn" style="width:100%; justify-content:center; margin-top:8px;"><i class="ti ti-search"></i>Find my order</button>
     </div>
   `;
 }
@@ -51,7 +52,7 @@ function orderHtml(order, whatsappNumber) {
 
   return `
     <div class="track-card">
-      <p class="muted">Order #${escapeHtml(order.id)}</p>
+      <p class="muted" style="text-align:left;">Order #${escapeHtml(order.id)}</p>
       <h1>${escapeHtml(STATUS_LABELS[order.status] || order.status)}</h1>
       <div class="order-summary">
         ${itemLines}
@@ -60,13 +61,13 @@ function orderHtml(order, whatsappNumber) {
       ${
         waLink && order.status !== 'delivered' && order.status !== 'cancelled'
           ? `
-        <p class="muted">Help your rider find you — share your live location on WhatsApp.</p>
-        <a class="whatsapp-btn" href="${waLink}" target="_blank" rel="noopener">Share location on WhatsApp</a>
-        <div class="info-note">This opens WhatsApp. Tap the attachment icon, choose location, then share live location so we can find you.</div>
+        <p class="muted" style="text-align:left;">Help your rider find you — share your live location on WhatsApp.</p>
+        <a class="whatsapp-btn" href="${waLink}" target="_blank" rel="noopener"><i class="ti ti-brand-whatsapp"></i> Share location on WhatsApp</a>
+        <div class="info-note"><i class="ti ti-info-circle"></i> This opens WhatsApp. Tap the attachment icon, choose location, then share live location so we can find you.</div>
       `
           : ''
       }
-      <button class="secondary" id="track-another" style="margin-top:12px;">Track another order</button>
+      <button class="secondary" id="track-another" style="margin-top:14px; width:100%; justify-content:center;"><i class="ti ti-refresh"></i>Track another order</button>
     </div>
   `;
 }
