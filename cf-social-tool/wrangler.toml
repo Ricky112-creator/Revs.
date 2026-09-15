@@ -5,13 +5,13 @@ pages_build_output_dir = "public"
 [[d1_databases]]
 binding = "DB"
 database_name = "social_posts_db"
-database_id = "REPLACE_WITH_YOUR_DATABASE_ID"
+database_id = "67ea4e12-2e42-4a47-9cab-15bb116368ae"
 
 [vars]
 # WhatsApp business number that handles delivery orders, digits only,
 # country code first, no "+" or spaces (e.g. 254700111222). Not a secret --
 # it's meant to be dialed -- so it's a plain var, not wrangler secret.
-WHATSAPP_NUMBER = "REPLACE_WITH_YOUR_WHATSAPP_NUMBER"
+WHATSAPP_NUMBER = "0789077483"
 
 # ADMIN_TOKEN is NOT set here -- it's a secret, set separately.
 # See README.md "Setting the admin token" for the exact command.
