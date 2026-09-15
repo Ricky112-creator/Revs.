@@ -4,7 +4,7 @@ export async function onRequestGet({ request, env }) {
   if (!postId) return new Response('Missing postId', { status: 400 });
 
   const { results } = await env.DB.prepare(
-    `SELECT id, author, body, created_at FROM comments WHERE post_id = ? ORDER BY created_at ASC`
+    `SELECT id, author, body, created_at, admin_reply, admin_reply_at FROM comments WHERE post_id = ? ORDER BY created_at ASC`
   ).bind(postId).all();
 
   return Response.json(results);

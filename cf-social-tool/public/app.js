@@ -79,11 +79,15 @@ function renderReactionCounts(container, postId, counts) {
 }
 
 function commentHtml(c) {
+  const reply = c.admin_reply
+    ? `<div class="admin-reply"><strong>Reply from admin</strong><p>${escapeHtml(c.admin_reply)}</p></div>`
+    : '';
   return `
     <div class="comment">
       <strong>${escapeHtml(c.author)}</strong>
       <span class="time">${timeAgo(c.created_at)}</span>
       <p>${escapeHtml(c.body)}</p>
+      ${reply}
     </div>
   `;
 }
@@ -116,11 +120,15 @@ function shareLink(postId) {
 }
 
 function mediaHtml(post) {
+  // image_url is escaped here even though it currently only ever comes from
+  // the admin's own Cloudinary upload — the moment any user-submitted URL
+  // reaches this field (comments, orders, etc.), an unescaped attribute
+  // becomes a stored-XSS path straight to the admin token in localStorage.
   if (post.media_type === 'video' && post.image_url) {
-    return `<video src="${post.image_url}" class="post-media" controls playsinline></video>`;
+    return `<video src="${escapeHtml(post.image_url)}" class="post-media" controls playsinline></video>`;
   }
   if (post.image_url) {
-    return `<img src="${post.image_url}" class="post-media" alt="">`;
+    return `<img src="${escapeHtml(post.image_url)}" class="post-media" alt="">`;
   }
   return '';
 }

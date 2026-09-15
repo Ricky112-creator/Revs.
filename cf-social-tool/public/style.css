@@ -68,3 +68,56 @@ h1 { font-size: 22px; }
   border-radius: 8px;
   cursor: pointer;
 }
+
+/* ---- Admin tabs ---- */
+.admin-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+.admin-tab {
+  padding: 8px 14px; border: none; background: #e5e7eb;
+  border-radius: 8px; cursor: pointer; font-size: 14px;
+}
+.admin-tab.active { background: #2563eb; color: #fff; }
+
+/* ---- Comment moderation ---- */
+.comments-panel { margin-top: 10px; border-top: 1px solid #eee; padding-top: 10px; }
+.comment-mod { padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+.comment-mod p { margin: 4px 0; font-size: 14px; }
+.admin-reply {
+  background: #eff6ff; border-radius: 8px; padding: 8px 10px; margin-top: 6px;
+}
+.admin-reply strong { font-size: 12px; color: #2563eb; }
+.admin-reply p { margin: 2px 0 0; font-size: 13px; }
+.reply-form { margin-top: 8px; }
+.reply-form textarea {
+  width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 8px;
+  font-family: inherit; margin-bottom: 8px;
+}
+
+/* ---- Orders (admin) ---- */
+.order-row {
+  background: #fff; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px;
+}
+.order-status {
+  padding: 6px 8px; border-radius: 6px; border: 1px solid #ddd; font-size: 13px;
+}
+.whatsapp-link {
+  display: inline-block; text-decoration: none; font-size: 13px;
+  background: #22c55e; color: #fff !important; padding: 6px 12px; border-radius: 6px;
+}
+
+/* ---- Order tracking (public) ---- */
+.track-card {
+  background: #fff; border-radius: 12px; padding: 20px; max-width: 420px; margin: 0 auto;
+}
+.order-summary { margin: 12px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 8px 0; }
+.order-line { display: flex; justify-content: space-between; font-size: 14px; padding: 4px 0; }
+.order-line.total { font-weight: 600; border-top: 1px solid #eee; margin-top: 6px; padding-top: 8px; }
+.whatsapp-btn {
+  display: block; text-align: center; text-decoration: none;
+  background: #22c55e; color: #fff; padding: 12px; border-radius: 8px;
+  font-weight: 600; margin-top: 10px;
+}
+.info-note {
+  background: #eff6ff; color: #1d4ed8; font-size: 12px; padding: 10px 12px;
+  border-radius: 8px; margin-top: 10px; line-height: 1.5;
+}
+.error { color: #b91c1c; font-size: 13px; }

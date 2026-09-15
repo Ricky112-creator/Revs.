@@ -16,6 +16,18 @@ function unlockUI() {
   loadPosts();
 }
 
+// ---- Tab switching ----
+document.querySelectorAll('.admin-tab').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.admin-tab').forEach((b) => b.classList.remove('active'));
+    document.querySelectorAll('.admin-tab-panel').forEach((p) => (p.style.display = 'none'));
+    btn.classList.add('active');
+    const panel = document.getElementById('tab-' + btn.dataset.tab);
+    panel.style.display = 'block';
+    if (btn.dataset.tab === 'orders' && window.loadOrders) window.loadOrders();
+  });
+});
+
 async function tryUnlock(token) {
   const ok = await checkToken(token);
   if (ok) {
@@ -100,8 +112,8 @@ function escapeHtml(str) {
 
 function mediaPreviewHtml(url, type) {
   if (!url) return '';
-  if (type === 'video') return `<video src="${url}" style="width:100%;border-radius:8px;margin-bottom:12px;" controls></video>`;
-  return `<img src="${url}" style="width:100%;border-radius:8px;margin-bottom:12px;">`;
+  if (type === 'video') return `<video src="${escapeHtml(url)}" style="width:100%;border-radius:8px;margin-bottom:12px;" controls></video>`;
+  return `<img src="${escapeHtml(url)}" style="width:100%;border-radius:8px;margin-bottom:12px;">`;
 }
 
 let draftPost = null;
@@ -165,12 +177,18 @@ async function loadPosts() {
     posts
       .map(
         (p) => `
-    <div class="post-row">
-      <div>
-        <strong>${escapeHtml(p.title)}</strong><br>
-        <a href="/post/${p.id}" target="_blank">/post/${p.id}</a>
+    <div class="post-row" data-post-id="${p.id}">
+      <div class="post-row-main">
+        <div>
+          <strong>${escapeHtml(p.title)}</strong><br>
+          <a href="/post/${p.id}" target="_blank">/post/${p.id}</a>
+        </div>
+        <div>
+          <button class="secondary comments-toggle" data-id="${p.id}">Comments (${p.comment_count ?? 0})</button>
+          <button data-id="${p.id}" class="delete-btn">Delete</button>
+        </div>
       </div>
-      <button data-id="${p.id}" class="delete-btn">Delete</button>
+      <div class="comments-panel" id="comments-panel-${p.id}" style="display:none;"></div>
     </div>
   `
       )
@@ -178,7 +196,7 @@ async function loadPosts() {
 
   list.querySelectorAll('.delete-btn').forEach((btn) => {
     btn.addEventListener('click', async () => {
-      if (!confirm('Delete this post?')) return;
+      if (!confirm('Delete this post? This also deletes its comments and reactions.')) return;
       const res = await fetch(`/api/posts/${btn.dataset.id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${getToken()}` },
@@ -188,6 +206,97 @@ async function loadPosts() {
         return;
       }
       loadPosts();
+    });
+  });
+
+  list.querySelectorAll('.comments-toggle').forEach((btn) => {
+    btn.addEventListener('click', () => toggleComments(btn.dataset.id));
+  });
+}
+
+async function toggleComments(postId) {
+  const panel = document.getElementById(`comments-panel-${postId}`);
+  const isOpen = panel.style.display !== 'none';
+  if (isOpen) {
+    panel.style.display = 'none';
+    return;
+  }
+  panel.style.display = 'block';
+  await refreshComments(postId);
+}
+
+async function refreshComments(postId) {
+  const panel = document.getElementById(`comments-panel-${postId}`);
+  panel.innerHTML = '<p class="muted">Loading comments...</p>';
+  const res = await fetch(`/api/comments?postId=${postId}`);
+  const comments = await res.json();
+  panel.innerHTML =
+    comments.map(commentModHtml).join('') || '<p class="muted">No comments yet.</p>';
+  wireCommentControls(panel, postId);
+}
+
+function commentModHtml(c) {
+  const reply = c.admin_reply
+    ? `<div class="admin-reply"><strong>Your reply</strong><p>${escapeHtml(c.admin_reply)}</p></div>`
+    : '';
+  return `
+    <div class="comment-mod" data-comment-id="${c.id}">
+      <div class="post-row-main">
+        <div>
+          <strong>${escapeHtml(c.author)}</strong>
+          <p>${escapeHtml(c.body)}</p>
+          ${reply}
+        </div>
+        <div>
+          <button class="secondary reply-toggle" data-id="${c.id}">${c.admin_reply ? 'Edit reply' : 'Reply'}</button>
+          <button class="delete-btn comment-delete" data-id="${c.id}">Delete</button>
+        </div>
+      </div>
+      <div class="reply-form" id="reply-form-${c.id}" style="display:none;">
+        <textarea placeholder="Write a reply..." maxlength="1000">${c.admin_reply ? escapeHtml(c.admin_reply) : ''}</textarea>
+        <button class="primary save-reply" data-id="${c.id}">Save reply</button>
+      </div>
+    </div>
+  `;
+}
+
+function wireCommentControls(panel, postId) {
+  panel.querySelectorAll('.reply-toggle').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const form = document.getElementById(`reply-form-${btn.dataset.id}`);
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    });
+  });
+
+  panel.querySelectorAll('.save-reply').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const form = document.getElementById(`reply-form-${btn.dataset.id}`);
+      const text = form.querySelector('textarea').value.trim();
+      const res = await fetch(`/api/comments/${btn.dataset.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+        body: JSON.stringify({ admin_reply: text }),
+      });
+      if (!res.ok) {
+        alert('Failed to save reply: ' + (await res.text()));
+        return;
+      }
+      refreshComments(postId);
+    });
+  });
+
+  panel.querySelectorAll('.comment-delete').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('Delete this comment?')) return;
+      const res = await fetch(`/api/comments/${btn.dataset.id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+      if (!res.ok) {
+        alert('Failed to delete: ' + (await res.text()));
+        return;
+      }
+      refreshComments(postId);
     });
   });
 }

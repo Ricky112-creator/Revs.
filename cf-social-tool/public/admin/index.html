@@ -46,6 +46,13 @@
 <div id="dashboard" style="display:none;">
 <header><h1>Admin dashboard</h1></header>
 
+<nav class="admin-tabs">
+  <button class="admin-tab active" data-tab="posts">Posts</button>
+  <button class="admin-tab" data-tab="orders">Orders</button>
+</nav>
+
+<div id="tab-posts" class="admin-tab-panel">
+
 <div id="cloudinary-setup">
   <label>Cloudinary cloud name (one-time setup — see instructions)</label>
   <input type="text" id="cloud-name" placeholder="e.g. dxyz1234">
@@ -78,8 +85,17 @@
 
 <h2>Existing posts</h2>
 <div id="post-list"></div>
+
+</div>
+
+<div id="tab-orders" class="admin-tab-panel" style="display:none;">
+  <h2>Orders</h2>
+  <div id="orders-list"><p class="muted">Loading...</p></div>
+</div>
+
 </div>
 
 <script src="app.js"></script>
+<script src="orders.js"></script>
 </body>
 </html>
