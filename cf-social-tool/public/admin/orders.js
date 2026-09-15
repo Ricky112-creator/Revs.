@@ -32,7 +32,7 @@ function orderRowHtml(o) {
           <span class="muted">${escapeHtmlOrders(itemsSummary)} · ${escapeHtmlOrders(o.amount)}</span>
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
-          <select class="order-status" data-id="${o.id}">${statusOptionsHtml(o.status)}</select>
+          <select class="order-status status-${o.status}" data-id="${o.id}">${statusOptionsHtml(o.status)}</select>
           <a class="secondary whatsapp-link" href="${waLink}" target="_blank" rel="noopener">WhatsApp</a>
         </div>
       </div>
@@ -64,7 +64,10 @@ async function loadOrders() {
       });
       if (!res.ok) {
         alert('Failed to update status: ' + (await res.text()));
+        return;
       }
+      ORDER_STATUSES.forEach((s) => select.classList.remove(`status-${s}`));
+      select.classList.add(`status-${select.value}`);
     });
   });
 }
