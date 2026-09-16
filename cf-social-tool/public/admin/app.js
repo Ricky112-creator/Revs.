@@ -13,7 +13,7 @@ async function checkToken(token) {
 function unlockUI() {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('dashboard').style.display = 'block';
-  loadPosts();
+  if (window.loadHome) window.loadHome();
 }
 
 // ---- Tab switching ----
@@ -25,6 +25,9 @@ document.querySelectorAll('.admin-tab').forEach((btn) => {
     const panel = document.getElementById('tab-' + btn.dataset.tab);
     panel.style.display = 'block';
     if (btn.dataset.tab === 'orders' && window.loadOrders) window.loadOrders();
+    if (btn.dataset.tab === 'home' && window.loadHome) window.loadHome();
+    if (btn.dataset.tab === 'analytics' && window.loadAnalytics) window.loadAnalytics();
+    if (btn.dataset.tab === 'published') loadPosts();
   });
 });
 

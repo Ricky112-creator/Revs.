@@ -159,10 +159,11 @@ button.secondary:hover { background: #f1f2f4; }
 .comment-form button:hover { background: var(--accent-hover); }
 
 /* ---- Admin: tabs ---- */
-.admin-tabs { display: flex; gap: 6px; margin-bottom: 20px; background: var(--surface-2); padding: 4px; border-radius: 12px; width: fit-content; }
+.admin-tabs { display: flex; gap: 6px; margin-bottom: 20px; background: var(--surface-2); padding: 4px; border-radius: 12px; width: fit-content; flex-wrap: wrap; }
 .admin-tab {
-  padding: 8px 16px; border: none; background: transparent; color: var(--text-secondary);
-  border-radius: 9px; cursor: pointer; font-size: 14px; font-weight: 600;
+  padding: 8px 14px; border: none; background: transparent; color: var(--text-secondary);
+  border-radius: 9px; cursor: pointer; font-size: 13.5px; font-weight: 600;
+  display: inline-flex; align-items: center; gap: 6px;
 }
 .admin-tab.active { background: var(--surface); color: var(--accent); box-shadow: var(--shadow); }
 
@@ -225,3 +226,22 @@ button.secondary:hover { background: #f1f2f4; }
   border-radius: var(--radius-sm); margin-top: 10px; line-height: 1.55;
 }
 .error { color: var(--danger); font-size: 13px; margin: -2px 0 4px; }
+
+/* ---- Admin: Home stat cards ---- */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+.stat-card { background: var(--surface); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); }
+.stat-label { font-size: 12.5px; color: var(--text-secondary); font-weight: 600; margin: 0 0 6px; }
+.stat-value { font-size: 22px; font-weight: 800; margin: 0; letter-spacing: -0.01em; }
+.shortcut-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+
+/* ---- Admin: Analytics chart ---- */
+.range-toggle { display: flex; gap: 6px; margin-bottom: 16px; background: var(--surface-2); padding: 4px; border-radius: 10px; width: fit-content; }
+.range-btn { border: none; background: transparent; color: var(--text-secondary); padding: 6px 14px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.range-btn.active { background: var(--surface); color: var(--accent); box-shadow: var(--shadow); }
+.chart-wrap { background: var(--surface); border-radius: var(--radius); padding: 20px 16px 12px; box-shadow: var(--shadow); }
+.chart-bars { display: flex; align-items: flex-end; gap: 4px; height: 160px; }
+.bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; cursor: default; }
+.bar { width: 70%; min-width: 3px; background: linear-gradient(180deg, var(--accent), #7c3aed); border-radius: 4px 4px 0 0; transition: opacity 0.15s; }
+.bar-col:hover .bar { opacity: 0.75; }
+.bar-label { font-size: 10px; color: var(--text-muted); margin-top: 6px; }
+.chart-range-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-top: 8px; padding: 0 4px; }
