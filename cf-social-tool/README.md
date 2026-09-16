@@ -33,15 +33,35 @@ posts, and comment moderation from `/admin`.
    This is the only thing standing between the public internet and your
    write endpoints, so don't reuse a password from anywhere else.
 
-3. **Set the WhatsApp business number in `wrangler.toml`:**
+3. **Create the KV namespace for media uploads (photos and video):**
+   ```
+   npx wrangler kv namespace create MEDIA
+   ```
+   Copy the `id` it prints into `wrangler.toml` under `[[kv_namespaces]]`
+   (see below). No third-party account, no signup, **no card required** —
+   Workers KV is included free on the same plan you're already using for
+   D1 and Pages. Limits: 1GB total storage, 1,000 writes/day, 25MB max per
+   file. Fine for a small site's pace of posting; if you ever outgrow it,
+   Cloudflare R2 is the natural next step, but it requires adding a card
+   to your account even to use its free tier, so there's no rush.
+
+   Add this to `wrangler.toml`, right after the `[[d1_databases]]` block:
+   ```toml
+   [[kv_namespaces]]
+   binding = "MEDIA"
+   id = "PASTE_THE_ID_FROM_THE_CREATE_COMMAND_HERE"
+   ```
+
+   The admin dashboard's photo/video picker uploads straight here through
+   `/api/upload`, which is gated by `ADMIN_TOKEN` — unlike the old
+   Cloudinary unsigned-preset setup, there's no way for someone outside the
+   admin login to upload directly to your storage and burn through your
+   quota.
+
+4. **Set the WhatsApp business number in `wrangler.toml`:**
    Edit the `WHATSAPP_NUMBER` var — digits only, country code first, no `+`
    or spaces (e.g. `254700111222`). This is not a secret; it's the number
    customers' WhatsApp opens to.
-
-4. **Configure Cloudinary** (unsigned upload preset) in the admin dashboard's
-   one-time setup box — cloud name + preset name, stored in that browser's
-   `localStorage`. Lock down file size/format limits on the preset itself in
-   the Cloudinary dashboard; this code doesn't enforce any.
 
 5. **Deploy:**
    ```
@@ -93,5 +113,11 @@ data-retention and access-control obligations — worth scoping separately.
 - No moderation queue for comments — they're public the instant they're
   posted. The admin dashboard can delete or reply after the fact, not before.
 - One `ADMIN_TOKEN` for the whole deployment, no per-admin accounts.
+- `/api/upload` accepts JPEG/PNG/WebP/GIF images and MP4/WebM/MOV video up to
+  25MB, gated by `ADMIN_TOKEN`. There's no virus/content scanning on uploads —
+  fine for a trusted single admin, worth revisiting if multiple people ever
+  get admin access. Storage is Workers KV (1GB total, 1,000 writes/day) —
+  fine to start, but if you're posting media heavily, watch usage in the
+  Cloudflare dashboard and consider R2 once you're ready to add a card.
 - Single-tenant: one Pages project + one D1 database per client. See the
   original security review for the multi-tenancy discussion if that changes.
