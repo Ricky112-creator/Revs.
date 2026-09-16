@@ -6,7 +6,9 @@ pages_build_output_dir = "public"
 binding = "DB"
 database_name = "social_posts_db"
 database_id = "67ea4e12-2e42-4a47-9cab-15bb116368ae"
-
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "social-tool-media"
 [vars]
 # WhatsApp business number that handles delivery orders, digits only,
 # country code first, no "+" or spaces (e.g. 254700111222). Not a secret --
