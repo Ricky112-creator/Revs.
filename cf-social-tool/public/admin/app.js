@@ -148,6 +148,12 @@ document.getElementById('confirm-publish-btn').addEventListener('click', async (
 });
 
 // ---- Existing posts list ----
+function formatPublished(iso) {
+  return new Date(iso).toLocaleString(undefined, {
+    month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit',
+  });
+}
+
 async function loadPosts() {
   const res = await fetch('/api/posts');
   const posts = await res.json();
@@ -160,6 +166,7 @@ async function loadPosts() {
       <div class="post-row-main">
         <div>
           <strong>${escapeHtml(p.title)}</strong><br>
+          <span class="muted" style="font-size:12.5px;">Published ${formatPublished(p.created_at)}</span><br>
           <a href="/post/${p.id}" target="_blank">/post/${p.id}</a>
         </div>
         <div>

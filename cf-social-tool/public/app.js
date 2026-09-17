@@ -15,7 +15,14 @@ function timeAgo(iso) {
   if (diff < 60) return 'just now';
   if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
   if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
-  return Math.floor(diff / 86400) + 'd ago';
+  if (diff < 7 * 86400) return Math.floor(diff / 86400) + 'd ago';
+  return new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function exactTime(iso) {
+  return new Date(iso).toLocaleString(undefined, {
+    month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit',
+  });
 }
 
 const REACTIONS = [
@@ -137,7 +144,10 @@ function postCardHtml(post) {
   return `
     <article class="post-card" data-id="${post.id}">
       ${mediaHtml(post)}
-      <h2>${escapeHtml(post.title)}</h2>
+      <div class="post-meta">
+        <h2>${escapeHtml(post.title)}</h2>
+        <span class="post-time" title="${exactTime(post.created_at)}">${timeAgo(post.created_at)}</span>
+      </div>
       <p>${escapeHtml(post.body)}</p>
       <div class="reactions" id="reactions-${post.id}"></div>
       <div class="actions">
