@@ -14,6 +14,7 @@ function unlockUI() {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('dashboard').style.display = 'block';
   if (window.loadHome) window.loadHome();
+  if (window.initNotifications) window.initNotifications();
 }
 
 // ---- Tab switching ----

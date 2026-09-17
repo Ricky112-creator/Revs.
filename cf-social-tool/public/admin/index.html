@@ -27,7 +27,21 @@
 </div>
 
 <div id="dashboard" style="display:none;">
-<header><div class="brand-mark"><i class="ti ti-layout-dashboard"></i></div><h1>Admin dashboard</h1></header>
+<header>
+  <div class="brand-mark"><i class="ti ti-layout-dashboard"></i></div>
+  <h1>Admin dashboard</h1>
+  <div class="notif-wrap">
+    <button id="notif-bell" class="notif-bell-btn" aria-label="Notifications">
+      <i class="ti ti-bell"></i>
+      <span id="notif-badge" class="notif-badge" style="display:none;"></span>
+    </button>
+    <div id="notif-dropdown" class="notif-dropdown" style="display:none;">
+      <div class="notif-dropdown-header">Notifications</div>
+      <div id="notif-list"></div>
+    </div>
+  </div>
+</header>
+<button id="enable-notifs-btn" class="secondary" style="margin: -8px 0 18px;"><i class="ti ti-bell-ringing"></i>Enable browser notifications</button>
 
 <nav class="admin-tabs">
   <button class="admin-tab active" data-tab="home"><i class="ti ti-home"></i>Home</button>
@@ -88,5 +102,6 @@
 <script src="orders.js"></script>
 <script src="home.js"></script>
 <script src="analytics.js"></script>
+<script src="notifications.js"></script>
 </body>
 </html>
