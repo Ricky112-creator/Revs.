@@ -55,53 +55,29 @@ if (savedToken) {
   checkToken(savedToken).then((ok) => { if (ok) unlockUI(); });
 }
 
-// ---- Cloudinary setup (stored locally in this browser) ----
-function getCloudinaryConfig() {
-  return {
-    cloudName: localStorage.getItem('cloudinary_cloud_name') || '',
-    uploadPreset: localStorage.getItem('cloudinary_upload_preset') || '',
-  };
-}
-const cfg = getCloudinaryConfig();
-document.getElementById('cloud-name').value = cfg.cloudName;
-document.getElementById('upload-preset').value = cfg.uploadPreset;
-
-document.getElementById('save-cloudinary').addEventListener('click', () => {
-  localStorage.setItem('cloudinary_cloud_name', document.getElementById('cloud-name').value.trim());
-  localStorage.setItem('cloudinary_upload_preset', document.getElementById('upload-preset').value.trim());
-  alert('Cloudinary settings saved in this browser.');
-});
-
-// ---- Media upload ----
+// ---- Media upload — straight to our own storage, no third-party account needed ----
 document.getElementById('media-file').addEventListener('change', async (e) => {
   const file = e.target.files[0];
   const status = document.getElementById('upload-status');
   if (!file) return;
 
-  const { cloudName, uploadPreset } = getCloudinaryConfig();
-  if (!cloudName || !uploadPreset) {
-    status.textContent = 'Set up your Cloudinary cloud name and upload preset above first.';
-    e.target.value = '';
-    return;
-  }
-
   status.textContent = 'Uploading...';
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('upload_preset', uploadPreset);
 
   try {
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`, {
+    const res = await fetch('/api/upload', {
       method: 'POST',
+      headers: { Authorization: `Bearer ${getToken()}` },
       body: formData,
     });
     if (!res.ok) throw new Error(await res.text());
     const data = await res.json();
-    document.getElementById('media-url').value = data.secure_url;
-    document.getElementById('media-type').value = data.resource_type === 'video' ? 'video' : 'image';
+    document.getElementById('media-url').value = data.url;
+    document.getElementById('media-type').value = data.mediaType;
     status.textContent = 'Uploaded ✓';
   } catch (err) {
-    status.textContent = 'Upload failed. Check your Cloudinary settings.';
+    status.textContent = 'Upload failed: ' + err.message;
     console.error(err);
   }
 });
